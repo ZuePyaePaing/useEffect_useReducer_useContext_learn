@@ -8,6 +8,11 @@ export const reducer = (state, action) => {
         return state;
       }
       return { ...state, cart: [...state.cart, action.payload] };
+    case "REMOVE_CART":
+      return {
+        ...state,
+        cart: state.cart.filter((item) => item.id !== action.payload.id),
+      };
     default:
       return state;
   }

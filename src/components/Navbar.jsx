@@ -1,18 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStateContextCustom } from "../context/StateContext";
 import Backdrop from "./Backdrop";
 import BackdropItem from "./BackdropItem";
 
 const Navbar = () => {
   const [showBackdrop, setShowBackdrop] = useState(false);
+  const [mainTotal, setMainTotal] = useState(0);
+
+  useEffect(() => {
+    setMainTotal(total);
+  }, []);
+
   const {
     state: { cart },
     search,
     setSearch,
   } = useStateContextCustom();
 
+  const increaseTotal = (price) => {
+    setMainTotal(mainTotal + price);
+  };
+
+  const decreaseTotal = (price) => {
+    setMainTotal(mainTotal - price);
+  };
   const handleCloseBackdrop = () => setShowBackdrop(false);
   const handleOpenBackdrop = () => setShowBackdrop(true);
+
+  const total = () => cart?.reduce((pv, cv) => pv + cv.price, 0);
 
   return (
     <nav className=" fixed top-0  w-full bg-green-200 px-12 py-4 z-10 shadow-lg">
@@ -46,12 +61,17 @@ const Navbar = () => {
             <h1 className="text-2xl font-bold">My Order</h1>
             <div className=" flex items-center justify-center flex-col gap-y-3">
               {cart.map((item) => (
-                <BackdropItem key={item.id} {...item} />
+                <BackdropItem
+                  key={item.id}
+                  item={item}
+                  increaseTotal={increaseTotal}
+                  decreaseTotal={decreaseTotal}
+                />
               ))}
             </div>
             <div className=" border-t-2 my-2 border-gray-500 flex items-center justify-between">
-              <h2>Total Amount</h2>
-              <p>$ {0}</p>
+              <h2 className=" font-bold text-lg">Total Amount</h2>
+              <p className=" font-bold text-lg">$ {mainTotal.toFixed(2)}</p>
             </div>
           </Backdrop>
         )}

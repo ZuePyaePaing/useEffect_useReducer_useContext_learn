@@ -1,28 +1,38 @@
 import { useState } from "react";
+import { useStateContextCustom } from "../context/StateContext";
 
-const BackdropItem = (props) => {
+const BackdropItem = ({ item, increaseTotal, decreaseTotal }) => {
+  const { dispatch } = useStateContextCustom();
   const [quantity, setQuantity] = useState(1);
-  const { title, price, image } = props;
-  const oneItemPrice = price * quantity;
+
+  const oneItemPrice = item.price * quantity;
+
   const increase = () => {
     setQuantity(quantity + 1);
+    increaseTotal(item.price);
   };
 
   const decrease = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
+      decreaseTotal(item.price);
     }
   };
 
+  const deletebtn = () => {
+    dispatch({ type: "REMOVE_CART", payload: item });
+    decreaseTotal(oneItemPrice);
+  };
+  
   return (
-    <div className=" flex items-center justify-between gap-x-3">
+    <div className=" w-[90%] flex items-center justify-between gap-x-3">
       <img
         className=" w-[60px] h-[60px] border-2 overflow-hidden object-cover"
-        src={image}
-        alt={title}
+        src={item.image}
+        alt={item.title}
       />
       <div className="flex flex-col">
-        <h3> {title.substring(0, 15)}...</h3>
+        <h3> {item.title.substring(0, 15)}...</h3>
         <div className=" flex gap-x-2 items-center ">
           <p
             onClick={decrease}
@@ -36,6 +46,9 @@ const BackdropItem = (props) => {
             className=" bg-gray-500 text-white w-6 h-6 text-center rounded-lg cursor-pointer text-xl"
           >
             +
+          </p>
+          <p onClick={deletebtn} className=" cursor-pointer">
+            remove
           </p>
         </div>
       </div>
